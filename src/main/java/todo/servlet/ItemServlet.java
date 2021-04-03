@@ -29,6 +29,10 @@ public class ItemServlet extends HttpServlet {
                     items = ItemRepository.getInstance().findByDoneAll(true);
                     break;
                 }
+                case "false": {
+                    items = ItemRepository.getInstance().findByDoneAll(false);
+                    break;
+                }
                 default:
                     items = ItemRepository.getInstance().findAll();
             }
@@ -52,7 +56,13 @@ public class ItemServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             String desc = req.getParameter("data");
-            int id = Integer.parseInt(req.getParameter("id"));
+
+            int id = 0;
+            if (req.getParameter("id") != null) {
+                id = Integer.parseInt(req.getParameter("id"));
+            }
+
+
             JSONObject object = new JSONObject(desc);
 
             Item item;

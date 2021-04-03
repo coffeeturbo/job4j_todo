@@ -112,7 +112,7 @@
         return rows;
     }
 
-    function listItems(done = "true") {
+    function listItems(done = "false") {
         $.ajax({
             type: 'GET',
             url: 'http://localhost:8080/job4j_todo_war/items',
@@ -154,7 +154,8 @@
 
     function createItem() {
         var item = {
-            description: $("#desc").val()
+            description: $("#desc").val(),
+            done: false
         }
 
         jQuery.ajax({
