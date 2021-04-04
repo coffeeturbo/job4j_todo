@@ -49,7 +49,6 @@ public class ItemServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -91,7 +90,6 @@ public class ItemServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -105,19 +103,12 @@ public class ItemServlet extends HttpServlet {
             resp.setContentType("text/json");
             resp.setCharacterEncoding("UTF-8");
             resp.setHeader("Access-Control-Allow-Origin", "*");
-
-
             writer.println("{\"success\":true}");
-
-
         } catch (Exception e) {
             Gson gson = new Gson();
             writer.println("{\"success\":false, \"error\":" + gson.toJson(e.getMessage()) + "}");
             e.printStackTrace();
         }
-
         writer.flush();
     }
-
-
 }

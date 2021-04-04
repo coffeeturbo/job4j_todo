@@ -41,13 +41,10 @@ public class ItemRepository implements AutoCloseable {
     }
 
     public Item add(Item item) {
-        Session session = sf.openSession();
-        session.beginTransaction();
-        session.save(item);
-        session.getTransaction().commit();
-        session.close();
-
-        return item;
+        return execute(session -> {
+            session.save(item);
+            return item;
+        });
     }
 
     public Item findById(Integer id) {
