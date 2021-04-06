@@ -1,5 +1,7 @@
 package todo.repository;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -13,25 +15,23 @@ import java.util.Collection;
 import java.util.function.Function;
 
 public class ItemRepository implements AutoCloseable {
+    private static final Logger LOG = LogManager.getLogger(ItemRepository.class.getName());
 
     private final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
             .configure().build();
 
     private final SessionFactory sf = new MetadataSources(registry).buildMetadata().buildSessionFactory();
 
-    private static ItemRepository instance;
+    public final static ItemRepository instance = new ItemRepository();
 
     private ItemRepository() {
     }
 
     public static synchronized ItemRepository getInstance() {
-        if (instance == null) {
-            instance = new ItemRepository();
-        }
         return instance;
     }
 
-    public Item save(Item item) {
+    public synchronized Item save(Item item) {
         if (item.getId() == null) {
             add(item);
         } else {
@@ -40,7 +40,7 @@ public class ItemRepository implements AutoCloseable {
         return item;
     }
 
-    public Item add(Item item) {
+    public synchronized Item add(Item item) {
         return execute(session -> {
             session.save(item);
             return item;
@@ -52,19 +52,19 @@ public class ItemRepository implements AutoCloseable {
     }
 
     public Collection<Item> findAll() {
-        return execute(session -> session.createQuery("from Item").list());
+        return execute(session -> session.createQuery("from Item ORDER BY id").list());
     }
 
     public Collection<Item> findByDoneAll(Boolean done) {
 
         return execute(session -> {
-            Query query = session.createQuery("from Item where done=:done");
+            Query query = session.createQuery("from Item where done=:done order by id");
             query.setParameter("done", done);
             return query.list();
         });
     }
 
-    public boolean delete(Integer id) {
+    public synchronized boolean delete(Integer id) {
         return execute(session -> {
             Item item = new Item(id);
             session.delete(item);
@@ -72,7 +72,7 @@ public class ItemRepository implements AutoCloseable {
         });
     }
 
-    public boolean replace(Integer id, Item item) {
+    public synchronized boolean replace(Integer id, Item item) {
         return execute(session -> {
             item.setId(id);
             session.update(item);
@@ -89,6 +89,7 @@ public class ItemRepository implements AutoCloseable {
             return rsl;
         } catch (final Exception e) {
             session.getTransaction().rollback();
+            LOG.error(e);
             throw e;
         } finally {
             session.close();
