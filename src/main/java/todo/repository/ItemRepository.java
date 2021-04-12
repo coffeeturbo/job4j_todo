@@ -27,11 +27,11 @@ public class ItemRepository implements AutoCloseable {
     private ItemRepository() {
     }
 
-    public static synchronized ItemRepository getInstance() {
+    public static ItemRepository getInstance() {
         return instance;
     }
 
-    public synchronized Item save(Item item) {
+    public Item save(Item item) {
         if (item.getId() == null) {
             add(item);
         } else {
@@ -40,7 +40,7 @@ public class ItemRepository implements AutoCloseable {
         return item;
     }
 
-    public synchronized Item add(Item item) {
+    public Item add(Item item) {
         return execute(session -> {
             session.save(item);
             return item;
@@ -64,7 +64,7 @@ public class ItemRepository implements AutoCloseable {
         });
     }
 
-    public synchronized boolean delete(Integer id) {
+    public boolean delete(Integer id) {
         return execute(session -> {
             Item item = new Item(id);
             session.delete(item);
@@ -72,7 +72,7 @@ public class ItemRepository implements AutoCloseable {
         });
     }
 
-    public synchronized boolean replace(Integer id, Item item) {
+    public boolean replace(Integer id, Item item) {
         return execute(session -> {
             item.setId(id);
             session.update(item);
