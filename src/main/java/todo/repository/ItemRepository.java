@@ -35,7 +35,7 @@ public class ItemRepository implements AutoCloseable {
         if (item.getId() == null) {
             add(item);
         } else {
-            replace(item.getId(), item);
+            replace(item);
         }
         return item;
     }
@@ -66,15 +66,14 @@ public class ItemRepository implements AutoCloseable {
 
     public boolean delete(Integer id) {
         return execute(session -> {
-            Item item = new Item(id);
+            Item item = Item.builder().id(id).build();
             session.delete(item);
             return true;
         });
     }
 
-    public boolean replace(Integer id, Item item) {
+    public boolean replace(Item item) {
         return execute(session -> {
-            item.setId(id);
             session.update(item);
             return true;
         });

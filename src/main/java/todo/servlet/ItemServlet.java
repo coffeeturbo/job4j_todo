@@ -73,7 +73,14 @@ public class ItemServlet extends HttpServlet {
                 item.setDone(done);
             } else {
                 LocalDateTime dateTime = LocalDateTime.now();
-                item = new Item(object.get("description").toString(), Timestamp.valueOf(dateTime), done);
+
+                item = Item.builder()
+                        .description(object.get("description").toString())
+                        .created(Timestamp.valueOf(dateTime))
+                        .done(done)
+                        .build();
+
+//                item = new Item(object.get("description").toString(), Timestamp.valueOf(dateTime), done);
             }
 
             ItemRepository.getInstance().save(item);
