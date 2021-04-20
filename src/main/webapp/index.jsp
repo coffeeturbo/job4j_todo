@@ -47,6 +47,7 @@
                     <th>Id</th>
                     <th>Описание</th>
                     <th>Дата создания</th>
+                    <th>Создатель</th>
                     <th>Выполнено</th>
                     <th>Действия</th>
                 </tr>
@@ -102,10 +103,12 @@
         rows = rows + "<tr class='item-" + item.id + "'><td>"
             + item.id
             + "</td><td>" + item.description + "</td><td>"
-            + item.created + "</td><td>";
+            + item.created + "</td>";
 
-        rows = rows + createDoneButton(item);
-        rows = rows + "</td> "
+        rows = item.user ? rows + "<td>" + item.user.email+ "</td>" : rows + "<td> нет </td>";
+
+        rows = rows + "<td> " + createDoneButton(item)+ "</td> ";
+        rows = rows
             + "<td>" + '<button type="submit" onclick="deleteItem(' + item.id + ')" class="btn btn-danger"><i class="bi bi-x-circle-fill"></i></button>' + "</td>"
             + "</tr>";
 

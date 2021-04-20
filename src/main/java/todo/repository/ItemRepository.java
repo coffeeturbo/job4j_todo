@@ -9,7 +9,9 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.query.Query;
+import todo.model.IdAble;
 import todo.model.Item;
+import todo.model.User;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -31,7 +33,7 @@ public class ItemRepository implements AutoCloseable {
         return instance;
     }
 
-    public Item save(Item item) {
+    public <T extends IdAble> T save(T item) {
         if (item.getId() == null) {
             add(item);
         } else {
@@ -40,19 +42,20 @@ public class ItemRepository implements AutoCloseable {
         return item;
     }
 
-    public Item add(Item item) {
+    public <T> T add(T item) {
         return execute(session -> {
             session.save(item);
             return item;
         });
     }
 
-    public Item findById(Integer id) {
-        return execute(session -> session.get(Item.class, id));
+    public <T> T findById(Class<T> tClass, Integer id) {
+        return execute(session -> session.get(tClass, id));
     }
 
-    public Collection<Item> findAll() {
-        return execute(session -> session.createQuery("from Item ORDER BY id").list());
+    public <T> Collection<T> findAll(Class<T> tClass) {
+        String queryString = String.format("from %s ORDER BY id", tClass.getName());
+        return execute(session -> session.createQuery(queryString).list());
     }
 
     public Collection<Item> findByDoneAll(Boolean done) {
@@ -64,15 +67,23 @@ public class ItemRepository implements AutoCloseable {
         });
     }
 
-    public boolean delete(Integer id) {
+    public User findByEmail(String email) {
+
+        return (User) execute(session -> {
+            Query query = session.createQuery("from User where email=:email order by id");
+            query.setParameter("email", email);
+            return query.getSingleResult();
+        });
+    }
+
+    public <T> boolean delete(T item) {
         return execute(session -> {
-            Item item = Item.builder().id(id).build();
             session.delete(item);
             return true;
         });
     }
 
-    public boolean replace(Item item) {
+    public <T> boolean replace(T item) {
         return execute(session -> {
             session.update(item);
             return true;

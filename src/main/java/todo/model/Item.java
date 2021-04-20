@@ -11,7 +11,8 @@ import java.sql.Timestamp;
 @Builder(toBuilder = true)
 @Entity
 @Table(name = "item")
-public class Item {
+public class Item implements IdAble {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,4 +20,8 @@ public class Item {
     String description;
     Timestamp created;
     Boolean done;
+
+    @JoinColumn(name = "user_id")
+    @ManyToOne
+    User user;
 }

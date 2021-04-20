@@ -3,6 +3,7 @@ package todo.servlet;
 import com.google.gson.Gson;
 import org.json.JSONObject;
 import todo.model.Item;
+import todo.model.User;
 import todo.repository.ItemRepository;
 
 import javax.servlet.ServletException;
@@ -34,7 +35,7 @@ public class ItemServlet extends HttpServlet {
                     break;
                 }
                 default:
-                    items = ItemRepository.getInstance().findAll();
+                    items = ItemRepository.getInstance().findAll(Item.class);
             }
 
             resp.setContentType("text/json");
@@ -61,6 +62,7 @@ public class ItemServlet extends HttpServlet {
                 id = Integer.parseInt(req.getParameter("id"));
             }
 
+            User user = (User) req.getSession().getAttribute("user");
 
             JSONObject object = new JSONObject(desc);
 
@@ -69,18 +71,17 @@ public class ItemServlet extends HttpServlet {
             Boolean done = Boolean.parseBoolean(object.get("done").toString());
 
             if (id != 0) {
-                item = ItemRepository.getInstance().findById(id);
+                item = ItemRepository.getInstance().findById(Item.class ,id);
                 item.setDone(done);
             } else {
                 LocalDateTime dateTime = LocalDateTime.now();
 
                 item = Item.builder()
-                        .description(object.get("description").toString())
-                        .created(Timestamp.valueOf(dateTime))
-                        .done(done)
+                            .description(object.get("description").toString())
+                            .created(Timestamp.valueOf(dateTime))
+                            .done(done)
+                            .user(user)
                         .build();
-
-//                item = new Item(object.get("description").toString(), Timestamp.valueOf(dateTime), done);
             }
 
             ItemRepository.getInstance().save(item);
@@ -105,7 +106,8 @@ public class ItemServlet extends HttpServlet {
 
         PrintWriter writer = new PrintWriter(resp.getOutputStream());
         try {
-            ItemRepository.getInstance().delete(id);
+            Item item = Item.builder().id(id).build();
+            ItemRepository.getInstance().delete(item);
 
             resp.setContentType("text/json");
             resp.setCharacterEncoding("UTF-8");
