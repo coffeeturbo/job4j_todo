@@ -29,11 +29,11 @@ public class LoginServlet extends HttpServlet {
 
             if (!dbUser.getPassword().equals(req.getParameter("password"))) {
                 throw new Exception("wrong password");
-            } else {
-                HttpSession ses = req.getSession();
-                ses.setAttribute("user", dbUser);
-                resp.sendRedirect(req.getContextPath() + "/");
             }
+
+            HttpSession ses = req.getSession();
+            ses.setAttribute("user", dbUser);
+            resp.sendRedirect(req.getContextPath() + "/");
 
         } catch (Exception e) {
             resp.sendError(400, e.getMessage());
