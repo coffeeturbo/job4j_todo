@@ -17,6 +17,7 @@ import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ItemServlet extends HttpServlet {
@@ -64,7 +65,6 @@ public class ItemServlet extends HttpServlet {
                 item = ItemRepository.getInstance().findById(Item.class ,id);
                 item.setDone(done);
             } else {
-                LocalDateTime dateTime = LocalDateTime.now();
 
                 List<Category> categories = new ArrayList<>();
                 JSONArray jsonCategories = object.getJSONArray("categories");
@@ -76,12 +76,12 @@ public class ItemServlet extends HttpServlet {
                 }
 
                 item = Item.builder()
-                            .description(object.get("description").toString())
-                            .created(Timestamp.valueOf(dateTime))
-                            .done(done)
-                            .categories(categories)
-                            .user(user)
-                        .build();
+                    .description(object.get("description").toString())
+                    .created(new Date(System.currentTimeMillis()))
+                    .done(done)
+                    .categories(categories)
+                    .user(user)
+                .build();
             }
 
             ItemRepository.getInstance().save(item);

@@ -3,8 +3,8 @@ package todo.model;
 import lombok.*;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -20,13 +20,15 @@ public class Item implements IdAble {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
     String description;
-    Timestamp created;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    Date created;
     Boolean done;
 
     @JoinColumn(name = "user_id")
     @ManyToOne
     User user;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER  )
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     List<Category> categories = new ArrayList<>();
 }
