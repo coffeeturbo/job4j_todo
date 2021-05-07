@@ -1,6 +1,12 @@
 [![Build Status](https://www.travis-ci.com/coffeeturbo/job4j_todo.svg?branch=master)](https://www.travis-ci.com/coffeeturbo/job4j_todo)
 [![codecov](https://codecov.io/gh/coffeeturbo/job4j_todo/branch/master/graph/badge.svg?token=M8WLH6V301)](https://codecov.io/gh/coffeeturbo/job4j_todo)
 
+![JAVA >= 14](https://img.shields.io/badge/JAVA-%3E%3D14-red)
+![MAVEN >= 14](https://img.shields.io/badge/MAVEN-%3E%3D3-green)
+![PostgreSQL >= 14](https://img.shields.io/badge/PostgreSQL-%3E%3D5-blue)
+![Hibernate >= 5](https://img.shields.io/badge/Hibernate-%3E%3D5-orange)
+![Travis CI >= 5](https://img.shields.io/badge/Travis-CI-blue)
+
 # Todo list Single Page Web application
 
 
@@ -14,6 +20,10 @@
 - List Done Items
 
 ## Main Interface 
+![alt text](doc/img/main_interface.png)
+
+### Add new Item interface 
+![alt text](doc/img/new_item.png)
 ### List All Items
 ![alt text](doc/img/list_all.png)
 
@@ -21,6 +31,7 @@
 ![alt text](doc/img/list_done.png)
 
 ### Used technologies:
+
 - Maven
 - JDBC 
 - Hibernate 

@@ -13,7 +13,7 @@ import todo.model.IdAble;
 import todo.model.Item;
 import todo.model.User;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 
 public class ItemRepository implements AutoCloseable {
@@ -53,15 +53,14 @@ public class ItemRepository implements AutoCloseable {
         return execute(session -> session.get(tClass, id));
     }
 
-    public <T> Collection<T> findAll(Class<T> tClass) {
+    public <T> List<T> findAll(Class<T> tClass) {
         String queryString = String.format("from %s ORDER BY id", tClass.getName());
         return execute(session -> session.createQuery(queryString).list());
     }
 
-    public Collection<Item> findByDoneAll(Boolean done) {
-
+    public List<Item> findByDoneAll(Boolean done) {
         return execute(session -> {
-            Query query = session.createQuery("from Item where done=:done order by id");
+            Query query = session.createQuery("from Item i where i.done=:done order by i.id");
             query.setParameter("done", done);
             return query.list();
         });
@@ -70,7 +69,7 @@ public class ItemRepository implements AutoCloseable {
     public User findByEmail(String email) {
 
         return (User) execute(session -> {
-            Query query = session.createQuery("from User where email=:email order by id");
+            Query query = session.createQuery("from User u where u.email=:email order by u.id");
             query.setParameter("email", email);
             return query.getSingleResult();
         });

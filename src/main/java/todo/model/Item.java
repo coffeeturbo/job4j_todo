@@ -4,6 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -24,4 +26,7 @@ public class Item implements IdAble {
     @JoinColumn(name = "user_id")
     @ManyToOne
     User user;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER  )
+    List<Category> categories = new ArrayList<>();
 }

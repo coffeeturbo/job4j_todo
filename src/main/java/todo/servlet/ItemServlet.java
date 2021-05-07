@@ -1,7 +1,9 @@
 package todo.servlet;
 
 import com.google.gson.Gson;
+import org.json.JSONArray;
 import org.json.JSONObject;
+import todo.model.Category;
 import todo.model.Item;
 import todo.model.User;
 import todo.repository.ItemRepository;
@@ -14,7 +16,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ItemServlet extends HttpServlet {
 
@@ -24,28 +27,15 @@ public class ItemServlet extends HttpServlet {
         try {
             String done = req.getParameter("done");
 
-            Collection<Item> items;
+            List<Item> items;
             switch (done) {
-                case "true": {
-                    items = ItemRepository.getInstance().findByDoneAll(true);
-                    break;
-                }
-                case "false": {
-                    items = ItemRepository.getInstance().findByDoneAll(false);
-                    break;
-                }
-                default:
-                    items = ItemRepository.getInstance().findAll(Item.class);
+                case "true" -> items = ItemRepository.getInstance().findByDoneAll(true);
+                case "false" -> items = ItemRepository.getInstance().findByDoneAll(false);
+                default -> items = ItemRepository.getInstance().findAll(Item.class);
             }
 
-            resp.setContentType("text/json");
-            resp.setCharacterEncoding("UTF-8");
-            resp.setHeader("Access-Control-Allow-Origin", "*");
-            PrintWriter writer = new PrintWriter(resp.getOutputStream());
-
-            Gson gson = new Gson();
-            writer.println(gson.toJson(items));
-            writer.flush();
+            JsonResponse jsonResponse = JsonResponse.builder().response(resp).build();
+            jsonResponse.setData(items);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -76,24 +66,28 @@ public class ItemServlet extends HttpServlet {
             } else {
                 LocalDateTime dateTime = LocalDateTime.now();
 
+                List<Category> categories = new ArrayList<>();
+                JSONArray jsonCategories = object.getJSONArray("categories");
+                if(jsonCategories != null) {
+                    jsonCategories.forEach(categoryId -> {
+                        Category category = ItemRepository.getInstance().findById(Category.class, Integer.parseInt(categoryId.toString()));
+                        categories.add(category);
+                    });
+                }
+
                 item = Item.builder()
                             .description(object.get("description").toString())
                             .created(Timestamp.valueOf(dateTime))
                             .done(done)
+                            .categories(categories)
                             .user(user)
                         .build();
             }
 
             ItemRepository.getInstance().save(item);
 
-            resp.setContentType("text/json");
-            resp.setCharacterEncoding("UTF-8");
-            resp.setHeader("Access-Control-Allow-Origin", "*");
-            PrintWriter writer = new PrintWriter(resp.getOutputStream());
-
-            Gson gson = new Gson();
-            writer.println(gson.toJson(item));
-            writer.flush();
+            JsonResponse jsonResponse = JsonResponse.builder().response(resp).build();
+            jsonResponse.setData(item);
 
         } catch (Exception e) {
             e.printStackTrace();
