@@ -1,6 +1,5 @@
 [![Build Status](https://www.travis-ci.com/coffeeturbo/job4j_todo.svg?branch=master)](https://www.travis-ci.com/coffeeturbo/job4j_todo)
-[![codecov](https://codecov.io/gh/coffeeturbo/job4j_todo/branch/master/graph/badge.svg?token=M8WLH6V301)](https://codecov.io/gh/coffeeturbo/job4j_todo)
-
+[![codecov](https://codecov.io/gh/coffeeturbo/job4j_todo/branch/master/graph/badge.svg)](https://codecov.io/gh/coffeeturbo/job4j_todo)
 # Todo list Single Page Web application
 
 ![JAVA >= 14](https://img.shields.io/badge/JAVA-%3E%3D14-red)
