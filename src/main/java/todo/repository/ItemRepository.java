@@ -13,6 +13,7 @@ import todo.model.IdAble;
 import todo.model.Item;
 import todo.model.User;
 
+import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.function.Function;
 
@@ -34,12 +35,7 @@ public class ItemRepository implements AutoCloseable {
     }
 
     public <T extends IdAble> T save(T item) {
-        if (item.getId() == null) {
-            add(item);
-        } else {
-            replace(item);
-        }
-        return item;
+        return item.getId() == null ? add(item) : replace(item);
     }
 
     public <T> T add(T item) {
@@ -67,12 +63,16 @@ public class ItemRepository implements AutoCloseable {
     }
 
     public User findByEmail(String email) {
-
-        return (User) execute(session -> {
-            Query query = session.createQuery("from User u where u.email=:email order by u.id");
-            query.setParameter("email", email);
-            return query.getSingleResult();
-        });
+        try {
+            return (User) execute(session -> {
+                Query query = session.createQuery("from User u where u.email=:email order by u.id");
+                query.setParameter("email", email);
+                return query.getSingleResult();
+            });
+        } catch (final NoResultException e) {
+            LOG.error(e);
+            return null;
+        }
     }
 
     public <T> boolean delete(T item) {
@@ -82,10 +82,10 @@ public class ItemRepository implements AutoCloseable {
         });
     }
 
-    public <T> boolean replace(T item) {
+    public <T> T replace(T item) {
         return execute(session -> {
             session.update(item);
-            return true;
+            return item;
         });
     }
 
